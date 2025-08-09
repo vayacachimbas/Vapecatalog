@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Catálogo Vapers — Vaya Cachimbas</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ffffff;--text:#111928;--muted:#6b7280;--card:#f5f7fb;--border:#e5e7eb;--shadow:0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.hero{text-align:center;padding:30px 16px 12px}
+.hero img{max-width:min(320px,60vw);height:auto;display:block;margin:0 auto}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px 60px}
+.tabs{display:flex;gap:16px;align-items:center;justify-content:center;margin:14px 0 10px;flex-wrap:wrap}
+.tab{cursor:pointer;font-size:14px;color:#0f172a;opacity:.65;padding:8px 12px;border-radius:999px;border:1px solid transparent}
+.tab.active{opacity:1;border-color:#d7dbe3;background:#f7f8fb}
+.search{margin:14px auto 18px;max-width:min(720px,92vw);display:flex;gap:8px;align-items:center;justify-content:center}
+.search input{width:100%;padding:18px 18px;border:1px solid var(--border);border-radius:14px;background:#fff;font-size:18px;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:16px}
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.imgbox{background:var(--card);display:flex;align-items:center;justify-content:center}
+.imgbox img{width:100%;aspect-ratio:1/1;object-fit:contain;display:block}
+.imgbox .ph{width:100%;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;color:#9aa3af;border:1px dashed #d4d7de;margin:12px;border-radius:10px;text-align:center;padding:8px}
+.info{padding:14px}
+.info b{display:block;font-size:18px;margin-bottom:2px;font-weight:bold;text-transform:uppercase}
+.info small{color:var(--muted);text-transform:uppercase}
+.badge{display:inline-block;margin-left:6px;border:1px solid #dbe1ea;border-radius:999px;padding:2px 8px;font-size:11px;color:#4b5563;background:#f8fafc}
+
+
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.card.unavailable{filter:grayscale(100%);opacity:.55;position:relative}
+.card.unavailable .overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.7);color:#fff;padding:6px 10px;border-radius:6px;font-weight:700;text-transform:uppercase;pointer-events:none}
+.admin-mode .card{cursor:pointer}
+#adminBtn{position:fixed;bottom:5px;right:5px;width:30px;height:30px;background:white;border:none;cursor:pointer;z-index:999}
+
+
+.subtabs{display:flex;gap:10px;align-items:center;justify-content:center;margin:6px 0 0;flex-wrap:wrap}
+.subtabs .subtab{cursor:pointer;font-size:13px;color:#0f172a;opacity:.7;padding:6px 10px;border-radius:999px;border:1px solid transparent}
+.subtabs .subtab.active{opacity:1;border-color:#d7dbe3;background:#f7f8fb}
+.subtabs--hidden{display:none}
+
+
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid #ccebd6;background:#e9f9f0;color:#136b3d}
+.tag[data-tag="MINT"]{border-color:#bfead1;background:#dff7ec;color:#127a43}
+.tag[data-tag="SWEET"]{border-color:#f5c3da;background:#fde6f1;color:#a83265}
+
+
+.tab.active { background: #fff7d6 !important; border-radius: 999px; }
+.subtab.active { background: #ffefb3 !important; border-radius: 999px; }
+
+</style>
+</head>
+<body>
+  <section class="hero"><img src="data:image/webp;base64,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" alt="Vaya Cachimbas"></section>
+  <div class="wrap">
+    <div class="tabs">
+  <span class="tab active" data-brand="">TODOS</span>
+  <span class="tab" data-brand="OXBAR">OXBAR</span>
+  <span class="tab" data-brand="LOST MARY">LOST MARY</span>
+  <span class="tab" data-brand="ELFBAR">ELFBAR</span>
+  <span class="tab" data-brand="ZERO NICOTINA">ZERO NICOTINA</span>
+  <span class="tab" data-brand="TAPPO AIR">TAPPO AIR</span>
+  <span class="tab" data-brand="ALPHA">ALPHA</span>
+</div>
+    <div id="lm-subtabs" class="subtabs subtabs--hidden">
+      <span class="subtab active" data-series="">TODOS</span>
+      <span class="subtab" data-series="BM600">BM600</span>
+      <span class="subtab" data-series="BM1000T">BM1000T</span>
+    </div>
+    <div class="search"><input id="q" type="search" placeholder="Buscar sabor (ej. mango, cherry, ice)"></div>
+    <div id="grid" class="grid"></div>
+  </div>
+<script>
+const ITEMS = [{"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Blue Mint", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/BlueMint.png?v=1693906510"], "tags": ["Mint"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Coconut Melon", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/CoconutMelon_c8167ebb-2259-4fda-9c1b-d8ebd3ccea2a.png?v=1693906508"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Fuji Apple Melon", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/FujiAppleMelon_ede98332-44ea-4fef-8da8-e1a5938b1a20.png?v=1693906510"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Grape Cranberries", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/GrapeCranberries.png?v=1693906510"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Lemon & Lime", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/lemon_lime.png?v=1693906510"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Mango Slushy", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/MangoSlushy.png?v=1693906510"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Pineapple Apple Pear", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/PineappleApplePear.png?v=1693906510"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Rainbow Drop", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/RainbowDrop_960be059-1378-4d3c-b78e-e11e3fc3fa91.png?v=1693906507"], "tags": ["Sweet"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Sea Salt Litchi", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/SeaSaltLitchi.png?v=1693906509"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Strawberry Mango", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/StrawberryMango_973ea4bf-7097-45bf-bf5a-2c9f4de6958e.png?v=1693906510"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Strawberry Marshmallow", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/StrawberryMarshmallow.png?v=1693906509"]}, {"brand": "OXBAR", "series": "Mini", "puffs": 600, "name": "Watermelon Cherry", "imgs": ["https://cdn.shopifycdn.net/s/files/1/0584/6709/0582/files/WatermelonCherry_435bf301-f2e0-4f66-b8fa-ec47b7ccb812.png?v=1693906510"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Triple Melon", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-triple-melon_300x300.jpg", "https://pevgrow.com/47573-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-triple-melon-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Triple Mango", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-triple-mango_300x300.jpg", "https://pevgrow.com/47574-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-triple-mango-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Strawberry Kiwi", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-strawberry-kiwi_300x300.jpg", "https://pevgrow.com/47575-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-strawberry-kiwi-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Pineapple Ice", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-pineapple-ice_300x300.jpg", "https://pevgrow.com/47580-medium_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-pineapple-ice-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Strawberry Guava", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-strawberry-guava_300x300.jpg", "https://pevgrow.com/47577-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-strawberry-guava-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Pineapple Coconut", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-pineapple-coconut_300x300.jpg", "https://pevgrow.com/47581-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-pineapple-coconut-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Pineapple Mango", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-pineapple-mango_300x300.jpg", "https://pevgrow.com/47579-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-pineapple-mango-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Grape", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-grape_300x300.jpg", "https://pevgrow.com/47582-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-grape-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Blueberry", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm-1000-blueberry_300x300.jpg", "https://vaporbros.net/wp-content/uploads/2024/09/Lost-Mary-BM1000-Turbo-Blueberry-2-600x600.jpg"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Peach Ice", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm-1000-peach-ice_300x300.jpg", "https://vaporbros.net/wp-content/uploads/2024/09/Lost-Mary-BM1000-Turbo-Peach-Ice-2-600x600.jpg"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Menthol", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm-1000-menthol_300x300.jpg", "https://vaporbros.net/wp-content/uploads/2024/09/Lost-Mary-BM1000-Turbo-Menthol-2-600x600.jpg"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Lemon Lime", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm-1000-lemon-lime_1_300x300.jpg", "https://vaporbros.net/wp-content/uploads/2024/09/Lost-Mary-BM1000-Turbo-Lemon-Lime-2-600x600.jpg"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Cherry Ice", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-cherry-ice_300x300.jpg", "https://vaporbros.net/wp-content/uploads/2024/09/Lost-Mary-BM1000-Turbo-Cherry-Ice-2-600x600.jpg"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Watermelon Ice", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-watermelon-ice_300x300.jpg", "https://pevgrow.com/47572-medium_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-watermelon-ice-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Blueberry Sour Raspberry", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-blueberry-sour-raspberry_300x300.jpg", "https://masquevapor.com/87613-large_default/disposable-vape-lost-mary-bm1000-blueberry-sour-raspberry-20mg-2ml.jpg"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Rose Lemonade", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-rose-lemonade_300x300.jpg", "https://pevgrow.com/47578-large_default/vaper-usa-e-getta-lost-mary-bm1000-turbo-rose-lemonade-2.webp"]}, {"brand": "LOST MARY", "series": "BM1000 Turbo", "puffs": 1000, "name": "Strawberry Ice", "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm1000-strawberry-ice_300x300.jpg", "https://vaporbros.net/wp-content/uploads/2024/09/Lost-Mary-BM1000-Turbo-Strawberry-Ice-2-600x600.jpg"]}, {"brand": "ZERO NICOTINA", "series": "Lost Mary BM600", "puffs": 600, "name": "Watermelon Ice", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm600-sin-nicotina-watermelon-ice_300x300.jpg?v=1727964844"]}, {"brand": "ZERO NICOTINA", "series": "Lost Mary BM600", "puffs": 600, "name": "Strawberry Ice", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm600-sin-nicotina-strawberry-ice_300x300.jpg?v=1727965283"]}, {"brand": "ZERO NICOTINA", "series": "Lost Mary BM600", "puffs": 600, "name": "Triple Mango", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm600-sin-nicotina-triple-mango_300x300.jpg?v=1727964534"]}, {"brand": "ZERO NICOTINA", "series": "Lost Mary BM600", "puffs": 600, "name": "Triple Melon", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-bm600-sin-nicotina-triple-melon_300x300.jpg?v=1727963997"]}, {"brand": "ELFBAR", "series": "Elfbar CR8000", "puffs": 8000, "name": "Watermelon Ice", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/elfbar-cr8000-watermelon-ice_300x300.jpg?v=1737546792"]}, {"brand": "ELFBAR", "series": "Elfbar CR8000", "puffs": 8000, "name": "Strawberry Ice", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/elfbar-cr8000-strawberry-ice_300x300.jpg?v=1737546289"]}, {"brand": "ELFBAR", "series": "Elfbar CR8000", "puffs": 8000, "name": "Mango Green Grape", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/elfbar-cr8000-mango--green-grape_720x.jpg?v=1737546237"]}, {"brand": "ELFBAR", "series": "Elfbar CR8000", "puffs": 8000, "name": "Triple Melon", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/elfbar-cr8000-triple-melon_300x300.jpg?v=1737546597"]}, {"brand": "ELFBAR", "series": "Elfbar CR8000", "puffs": 8000, "name": "Mango", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/elfbar-cr8000-mango_300x300.jpg?v=1737546081"]}, {"brand": "ELFBAR", "series": "Elfbar CR8000", "puffs": 8000, "name": "Mary Menta", "nic": 0, "imgs": ["https://lostmary.es/cdn/shop/files/elfbar-cr8000-mary-menta_300x300.jpg?v=1737546390"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Spearmint", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-tappo-pro-spearmint_1296x.jpg?v=1750845336"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Watermelon", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-watermelon_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Tropical Fruits", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-tropical-fruits_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Triple Mango", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-triple-mango_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Strawberry Kiwi", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-strawberry-kiwi_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Strawberry Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-strawberry-ice_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Pineapple Passion Fruit Lemon", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-pineapple-passion-fruit-lemon_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Pineapple Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-pineapple-ice_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Peach Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-peach-ice_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Mix Berries", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-mix-berries_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Menthol", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-menthol_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Kiwi Passion Fruit Guava", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-kiwi-passion-fruit-guava_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Grape", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-grape_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Golden Tobacco", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-golden-tobacco_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Double Apple", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-double-apple_300x300.jpg"]}, {"brand": "TAPPO AIR", "series": "Tappo PRO", "puffs": 600, "name": "Blueberry Sour Raspberry", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/cartucho-lost-mary-tappo-pro-blueberry-sour-raspberry_300x300.jpg"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Watermelon Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_WATERMELON_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Cola", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_COLA_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Strawberry Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_STRAWBERRY_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Cherry Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_CHERRY_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Pink Lemonade", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_PINK_LEMONADE_300x300.png?v=1719409946"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Peach Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_PEACH_ICE_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Triple Mango", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_TRIPLE_MANGO_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Blueberry", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_BLUEBERRY_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Double Apple", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-tp800-double-apple_300x300.webp?v=1720191829"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Lemon Lime", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_LEMON_LIME_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Pineapple Coconut", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-tp800-pineapple-coconut_300x300.jpg?v=1738059288"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Cranberry Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_CRANBERRY_300x300.png?v=1719409982"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Pineapple Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_PINEAPPLE_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Menthol", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-tp800-menthol_300x300.jpg?v=1731934316"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Pineapple Apple", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LOST_MARY_TP800_PINEAPPLE_APPLE_300x300.png?v=1719409981"]}, {"brand": "LOST MARY", "series": "TP800", "puffs": 800, "name": "Grape", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/lost-mary-tp800-grape_300x300.jpg?v=1731938927"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Watermelon Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/WATERMELON_300x300.png", "https://lostmary.es/cdn/shop/files/WATERMELON_300x300.png?v=1690868774"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Strawberry Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/STRAWBERRY-ICE_300x300.png", "https://lostmary.es/cdn/shop/files/STRAWBERRY-ICE_300x300.png?v=1690869054"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Strawberry Kiwi", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/STRAWBERRY-KIWI_300x300.png", "https://lostmary.es/cdn/shop/files/STRAWBERRY-KIWI_300x300.png?v=1690869002"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Triple Mango", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/TRIPLE-MANGO1_300x300.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MANGO1_300x300.png?v=1690868832"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Triple Melon", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/TRIPLE-MELON_300x300.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_300x300.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_300x300.webp", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_720x.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_720x.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_720x.webp", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_1024x1024.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON_1024x1024.webp", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON.webp", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_300x300.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_300x300.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_300x300.webp", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_720x.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_720x.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_720x.webp", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_1024x1024.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1_1024x1024.webp", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1.png", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1.jpg", "https://lostmary.es/cdn/shop/files/TRIPLE-MELON1.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_300x300.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_300x300.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_720x.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_720x.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_720x.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_1024x1024.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon_1024x1024.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-triple-melon.webp"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Blue Razz Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/BLUE-RAZZ_300x300.png", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_300x300.jpg", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_300x300.webp", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_720x.png", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_720x.jpg", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_720x.webp", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_1024x1024.png", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_1024x1024.webp", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ.png", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ.jpg", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_300x300.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_300x300.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_720x.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_720x.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_720x.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_1024x1024.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice_1024x1024.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blue-razz-ice.webp", "https://lostmary.es/cdn/shop/files/BLUE-RAZZ_300x300.png?v=1690868158"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Juicy Peach", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/JUICY-PEACH_720x.png?v=1690879135"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Pink Lemonade", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/PINK-LEMONADE1_1296x.png?v=1690879393"]}, {"brand": "LOST MARY", "series": "BM600S", "puffs": 600, "name": "Lemon Lime", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/LM-LEMON-LIME_720x.png?v=1704705926"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Grape", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/GRAPE_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_300x300.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_300x300.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_720x.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_720x.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_720x.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_1024x1024.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape_1024x1024.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-grape.webp"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Double Apple", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/DOUBLE-APPLE_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_300x300.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_300x300.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_720x.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_720x.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_720x.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_1024x1024.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple_1024x1024.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-double-apple.webp"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Blueberry", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/BLUEBERRY_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_300x300.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_300x300.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_720x.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_720x.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_720x.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_1024x1024.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry_1024x1024.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry.webp"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Pineapple Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/PINEAPPLE-ICE_300x300.png", "https://lostmary.es/cdn/shop/files/PINEAPPLE-ICE_300x300.png?v=1690879329"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Cherry Ice", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/CHERRY-ICE_300x300.png", "https://lostmary.es/cdn/shop/files/CHERRY-ICE_300x300.png?v=1690867966"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Menthol", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/MENTHOL_300x300.png", "https://lostmary.es/cdn/shop/files/MENTHOL_300x300.png?v=1690879247"]}, {"brand": "LOST MARY", "series": "BM600", "puffs": 600, "name": "Blueberry Sour Raspberry", "nic": 20, "imgs": ["https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_300x300.png", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_300x300.jpg", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_300x300.webp", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_720x.png", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_720x.jpg", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_720x.webp", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_1024x1024.png", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY_1024x1024.webp", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY.png", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY.jpg", "https://lostmary.es/cdn/shop/files/BLUEBERRY-SOUR-RASPBERRY.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_300x300.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_300x300.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_300x300.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_720x.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_720x.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_720x.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_1024x1024.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_1024x1024.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry_1024x1024.webp", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry.png", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry.jpg", "https://lostmary.es/cdn/shop/files/lost-mary-bm600-blueberry-sour-raspberry.webp"]}, {"name": "Strawnana Blackcurrant", "brand": "LOST MARY", "series": "BM600S", "puffs": "600 cal.", "imgs": ["https://lostmary.es/cdn/shop/files/LM-STRAWNANA-BLACKCURRANT_720x.png?v=1704705926"]}, {"name": "Straw Golden Piña", "brand": "LOST MARY", "series": "BM600S", "puffs": "600 cal.", "imgs": ["https://lostmary.es/cdn/shop/files/LM-STRAW-GOLDEN-PINA_720x.png?v=1704705926"]}, {"name": "Berry Apple Peach", "brand": "LOST MARY", "series": "BM600S", "puffs": "600 cal.", "imgs": ["https://lostmary.es/cdn/shop/files/LM-BERRY-APPLE-PEACH_720x.png?v=1704705926"]}, {"name": "Piña Kiwi Lemonade", "brand": "LOST MARY", "series": "BM600S", "puffs": "600 cal.", "imgs": ["https://lostmary.es/cdn/shop/files/LM-PINA-KIWI-LEMONADE_720x.png?v=1704705926"]}, {"name": "Apple Watermelon", "brand": "LOST MARY", "series": "BM600S", "puffs": "600 cal.", "imgs": ["https://lostmary.es/cdn/shop/files/LM-APPLE-WATERMELON_720x.png?v=1704705926"]}];
+
+// --- ALPHA: THE LEGEND (25,000 PUFFS, 0 mg) ---
+const ALPHA_ITEMS = [
+  { brand: "ALPHA", series: "THE LEGEND", puffs: 25000, name: "LEMON LIME ICE", nic: 0, imgs: ["https://vaperstock.es/cdn/shop/files/Vaper-Cazoleta-The_Legend-E-Shisha-25000-Puff-Lemon-Lime-Ice.jpg?v=1730997610&width=416"] },
+  { brand: "ALPHA", series: "THE LEGEND", puffs: 25000, name: "PINEAPPLE PEACH MANGO ICE", nic: 0, imgs: ["https://vaperstock.es/cdn/shop/files/Vaper-Cazoleta-The-Legend-E-Shisha-25000-Puff-Pineapple-Peach-Mango-Ice.jpg?v=1730998100&width=416"] },
+  { brand: "ALPHA", series: "THE LEGEND", puffs: 25000, name: "TRIPLE MELON STRAWBERRY ICE", nic: 0, imgs: ["https://vaperstock.es/cdn/shop/files/Vaper-Cazoleta-The-Legend-E-Shisha-25000-Puff-Triple-Melon-Strawberry-Ice_ca0eb460-fa03-409f-8eba-3173563f1ac0.jpg?v=1730997867&width=416"] },
+  { brand: "ALPHA", series: "THE LEGEND", puffs: 25000, name: "WATERMELON COCONUT ICE", nic: 0, imgs: ["https://vaperstock.es/cdn/shop/files/Vaper-Cazoleta-TheLegend-E-Shisha-25000-Puff-Watermelon-Coconut-Ice.jpg?v=1730997176&width=416"] },
+  { brand: "ALPHA", series: "THE LEGEND", puffs: 25000, name: "TWO APPLE", nic: 0, imgs: ["https://vaperstock.es/cdn/shop/files/Vaper-Cazoleta-The-Legend-E-Shisha-25000-Puff-Two-Apple.jpg?v=1730996615&width=416"] }
+];
+ITEMS.push(...ALPHA_ITEMS);
+
+
+const grid = document.getElementById('grid');
+const q = document.getElementById('q');
+const tabs = [...document.querySelectorAll('.tab')];
+let currentBrand = '';
+let currentSeries = '';
+const lmSubtabs = { el: null, tabs: [] };
+document.addEventListener('DOMContentLoaded', () => {
+  lmSubtabs.el = document.getElementById('lm-subtabs');
+  if(lmSubtabs.el){ lmSubtabs.tabs = [...lmSubtabs.el.querySelectorAll('.subtab')];
+    lmSubtabs.tabs.forEach(st => st.addEventListener('click', () => {
+      lmSubtabs.tabs.forEach(x => x.classList.remove('active'));
+      st.classList.add('active');
+      currentSeries = st.dataset.series || '';
+      apply();
+    }));
+  }
+});
+
+
+// IDs únicos para cada item (incluye ALPHA)
+ITEMS.forEach((it, idx) => { if (typeof it.id === 'undefined') it.id = idx; });
+
+let adminMode = false;
+let unavailableItems = JSON.parse(localStorage.getItem('unavailableItems') || '[]');
+
+function toggleAdminMode(){ 
+  adminMode = !adminMode; 
+  document.body.classList.toggle('admin-mode', adminMode);
+  apply();
+}
+
+function markUnavailable(itemId){
+  if(!adminMode) return;
+  if(!unavailableItems.includes(itemId)) unavailableItems.push(itemId);
+  else unavailableItems = unavailableItems.filter(x => x !== itemId);
+  localStorage.setItem('unavailableItems', JSON.stringify(unavailableItems));
+  apply();
+}
+
+
+
+function placeholder(text){
+  const div = document.createElement('div'); div.className='ph'; div.textContent = text; return div;
+}
+
+function mountImage(imgbox, urls, alt){
+  if(!urls || !urls.length){ imgbox.appendChild(placeholder('SIN IMAGEN')); return; }
+  let i = 0;
+  const img = document.createElement('img'); img.alt = alt; img.loading='lazy';
+  img.src = urls[i];
+  img.onerror = () => { i++; if(i < urls.length) img.src = urls[i]; else img.replaceWith(placeholder('SIN IMAGEN')); };
+  imgbox.appendChild(img);
+}
+
+function card(o){
+  const article = document.createElement('article'); article.className='card';
+  if (unavailableItems.includes(o.id)) {
+    article.classList.add('unavailable');
+    const overlay = document.createElement('div'); overlay.className='overlay'; overlay.textContent='NOT AVAILABLE';
+    article.appendChild(overlay);
+  }
+  const imgbox = document.createElement('div'); imgbox.className='imgbox';
+  const urls = o.imgs || (o.img ? [o.img] : []);
+  mountImage(imgbox, urls, o.name);
+  const info = document.createElement('div'); info.className='info';
+  const b = document.createElement('b'); b.textContent = o.name;
+  const small = document.createElement('small'); small.textContent = `${o.brand} · ${o.series} · ${o.puffs} PUFFS`;
+  info.appendChild(b); info.appendChild(small);
+  // tags visibles y clicables
+  if (o.tags && o.tags.length){
+    const tgWrap = document.createElement('div'); tgWrap.className='tags';
+    o.tags.forEach(tg => {
+      const span = document.createElement('span'); span.className='tag'; span.textContent = tg.toUpperCase();
+      span.dataset.tag = tg.toUpperCase();
+      span.title = `Buscar: ${tg}`;
+      span.addEventListener('click', (ev) => { ev.stopPropagation(); q.value = tg; apply(); });
+      tgWrap.appendChild(span);
+    });
+    info.appendChild(tgWrap);
+  }
+  article.appendChild(imgbox); article.appendChild(info);
+  article.addEventListener('click', () => markUnavailable(o.id));
+  return article;
+}
+
+function render(list){
+  grid.innerHTML = '';
+  list.forEach(o => grid.appendChild(card(o)));
+}
+
+function apply(){
+  const term = (q.value||'').toLowerCase().trim();
+  const out = ITEMS.filter(o => {
+    const b = (o.brand||'').toUpperCase();
+    const inCat = !currentBrand || (
+      (currentBrand==='ZERO NICOTINA' && o.nic===0) ||
+      (currentBrand && currentBrand!=='ZERO NICOTINA' && b===currentBrand)
+    );
+    if(!inCat) return false;
+    // Subfiltro solo para LOST MARY
+    if(currentBrand==='LOST MARY' && currentSeries){
+      const s = (o.series||'').toUpperCase();
+      if(currentSeries==='BM600' && s !== 'BM600') return false;
+      if(currentSeries==='BM1000T' && !s.includes('BM1000')) return false; // incluye BM1000 Turbo
+    }
+    if(!term) return true;
+
+    const name=(o.name||'').toLowerCase();
+    const series=(o.series||'').toLowerCase();
+    const brand=(o.brand||'').toLowerCase();
+    const tags=(o.tags||[]).join(' ').toLowerCase();
+    return name.includes(term) || series.includes(term) || brand.includes(term) || tags.includes(term);
+  });
+  render(out);
+}
+
+
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  currentBrand = t.dataset.brand || '';
+  // Subpestañas: visibles solo en LOST MARY
+  if(lmSubtabs.el){
+    if(currentBrand === 'LOST MARY'){
+      lmSubtabs.el.classList.remove('subtabs--hidden');
+    } else {
+      lmSubtabs.el.classList.add('subtabs--hidden');
+      currentSeries = '';
+      if(lmSubtabs.tabs && lmSubtabs.tabs.length){
+        lmSubtabs.tabs.forEach(x => x.classList.remove('active'));
+        lmSubtabs.tabs[0].classList.add('active'); // TODOS
+      }
+    }
+  }
+  apply();
+}));
+q.addEventListener('input', apply);
+apply();
+</script>
+<button id="adminBtn" onclick="toggleAdminMode()" title="Admin"></button>
+</body>
+</html>
