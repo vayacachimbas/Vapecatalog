@@ -8,6 +8,25 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
+
+#q {
+  text-align: center;
+  padding: 10px 14px;
+  font-size: 1.2em;
+  text-transform: uppercase;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  #q {
+  text-align: center;
+    max-width: 300px;
+  }
+}
+
+
 :root{--bg:#ffffff;--text:#111928;--muted:#6b7280;--card:#f5f7fb;--border:#e5e7eb;--shadow:0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06)}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
 .hero{text-align:center;padding:30px 16px 12px}
@@ -144,6 +163,550 @@ ITEMS.push(...ALPHA_ITEMS);
 
 const grid = document.getElementById('grid');
 const q = document.getElementById('q');
+
+  // === Búsqueda avanzada: sin acentos + sinónimos ES↔EN ===
+  function normalizeTerm(t){
+    return (t||'')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')   // quita tildes
+      .replace(/[^a-z0-9\s&]/g, ' ')     // deja letras, números, espacios y &
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  const RAW_SYNONYMS = {
+    "uva": ["grape"],
+    "grape": ["uva"],
+    "fresa": ["strawberry","strawberries"],
+    "strawberry": ["fresa"],
+    "strawberries": ["fresa"],
+    "sandia": ["watermelon"],
+    "sandía": ["watermelon"],
+    "watermelon": ["sandia","sandía"],
+    "melon": ["honeydew","cantaloupe","melón"],
+    "melón": ["honeydew","cantaloupe","melon"],
+    "honeydew": ["melon","melón"],
+    "cantaloupe": ["melon","melón"],
+    "manzana": ["apple","apples"],
+    "apple": ["manzana"],
+    "apples": ["manzana"],
+    "platano": ["banana"],
+    "plátano": ["banana"],
+    "banana": ["platano","plátano"],
+    "pina": ["pineapple"],
+    "piña": ["pineapple"],
+    "pineapple": ["pina","piña"],
+    "limon": ["lemon"],
+    "limón": ["lemon"],
+    "lemon": ["limon","limón"],
+    "lima": ["lime"],
+    "lime": ["lima"],
+    "naranja": ["orange"],
+    "orange": ["naranja"],
+    "cereza": ["cherry","cherries"],
+    "cherry": ["cereza"],
+    "cherries": ["cereza"],
+    "arandano": ["blueberry","blueberries"],
+    "arándano": ["blueberry","blueberries"],
+    "blueberry": ["arandano","arándano"],
+    "blueberries": ["arandano","arándano"],
+    "frambuesa": ["raspberry","raspberries"],
+    "raspberry": ["frambuesa"],
+    "raspberries": ["frambuesa"],
+    "mora": ["blackberry","blackberries"],
+    "blackberry": ["mora"],
+    "blackberries": ["mora"],
+    "grosella negra": ["blackcurrant"],
+    "blackcurrant": ["grosella negra"],
+    "maracuya": ["passionfruit","passion fruit","maracuyá","fruta de la pasion","fruta de la pasión"],
+    "maracuyá": ["passionfruit","passion fruit","maracuya","fruta de la pasion","fruta de la pasión"],
+    "passionfruit": ["maracuya","maracuyá","passion fruit","fruta de la pasion","fruta de la pasión"],
+    "passion fruit": ["maracuya","maracuyá","fruta de la pasion","fruta de la pasión"],
+    "fruta de la pasion": ["passionfruit","passion fruit","maracuya","maracuyá"],
+    "fruta de la pasión": ["passionfruit","passion fruit","maracuya","maracuyá"],
+    "melocoton": ["peach"],
+    "melocotón": ["peach"],
+    "peach": ["melocoton","melocotón"],
+    "albaricoque": ["apricot"],
+    "apricot": ["albaricoque"],
+    "pera": ["pear"],
+    "pear": ["pera"],
+    "coco": ["coconut"],
+    "coconut": ["coco"],
+    "mango": ["mango"],
+    "kiwi": ["kiwi"],
+    "granada": ["pomegranate"],
+    "pomegranate": ["granada"],
+    "menta": ["mint"],
+    "mint": ["menta"],
+    "hierbabuena": ["spearmint"],
+    "spearmint": ["hierbabuena"],
+    "mentol": ["menthol"],
+    "menthol": ["mentol"],
+    "frutos del bosque": ["berries","mixed berries","berry mix"],
+    "berries": ["frutos del bosque"],
+    "mixed berries": ["frutos del bosque"],
+    "berry mix": ["frutos del bosque"],
+    "cola": ["coca cola","coke","cola soda"],
+    "coca cola": ["cola"],
+    "coke": ["cola"],
+    "cola soda": ["cola"],
+    "nube": ["marshmallow"],
+    "marshmallow": ["nube"],
+    "caramelo": ["toffee","candy"],
+    "toffee": ["caramelo"],
+    "candy": ["caramelo","gominola"],
+    "gominola": ["gummy","candy"],
+    "gummy": ["gominola"],
+    "vainilla": ["vanilla"],
+    "vanilla": ["vainilla"],
+    "chocolate": ["cacao"],
+    "cacao": ["chocolate"],
+    "limonada": ["lemonade"],
+    "lemonade": ["limonada"],
+    "pomelo": ["grapefruit"],
+    "grapefruit": ["pomelo"],
+    "hielo": ["ice","frozen","cool"],
+    "ice": ["hielo","frozen","cool"],
+    "frozen": ["hielo","ice"],
+    "cool": ["hielo","ice"],
+    "chicle": ["gum","bubblegum"],
+    "gum": ["chicle","bubblegum"],
+    "bubblegum": ["chicle","gum"],
+
+    // combinaciones frecuentes
+    "limon y lima": ["lemon & lime","lemon and lime"],
+    "lemon & lime": ["limon y lima"],
+    "lemon and lime": ["limon y lima"],
+    "manzana verde": ["green apple"],
+    "green apple": ["manzana verde"],
+    "uva blanca": ["white grape"],
+    "white grape": ["uva blanca"],
+    "uva roja": ["red grape"],
+    "red grape": ["uva roja"],
+    "pina colada": ["piña colada"],
+    "piña colada": ["pina colada"],
+    "melocoton helado": ["peach ice"],
+    "melocotón helado": ["peach ice"],
+    "peach ice": ["melocoton helado","melocotón helado"]
+  };
+
+  // Normaliza claves y garantiza bidireccionalidad
+  const SYNONYMS = (() => {
+    const out = {};
+    for (const [k, arr] of Object.entries(RAW_SYNONYMS)) {
+      const nk = normalizeTerm(k);
+      out[nk] = out[nk] || new Set();
+      (arr||[]).forEach(v => out[nk].add(normalizeTerm(v)));
+    }
+    for (const [k, set] of Object.entries(out)) {
+      for (const v of set) {
+        out[v] = out[v] || new Set();
+        out[v].add(k);
+      }
+    }
+    const finalMap = {};
+    for (const [k, set] of Object.entries(out)) finalMap[k] = Array.from(set);
+    return finalMap;
+  })();
+  // Alias específicos por sabor (nombre exacto → lista de términos relacionados)
+  const RAW_ALIASES = {
+  "Blue Mint": [
+    "menta",
+    "mint"
+  ],
+  "Coconut Melon": [
+    "cantaloupe",
+    "coco",
+    "coconut",
+    "honeydew",
+    "melon",
+    "melón"
+  ],
+  "Fuji Apple Melon": [
+    "apple",
+    "apples",
+    "cantaloupe",
+    "honeydew",
+    "manzana",
+    "melon",
+    "melón"
+  ],
+  "Grape Cranberries": [
+    "arandano rojo",
+    "arándano rojo",
+    "cranberries",
+    "cranberry",
+    "grape",
+    "uva"
+  ],
+  "Lemon & Lime": [
+    "lemon",
+    "lemonade",
+    "lima",
+    "lime",
+    "limon",
+    "limonada",
+    "limón"
+  ],
+  "Mango Slushy": [
+    "granizado",
+    "mango",
+    "slushy"
+  ],
+  "Pineapple Apple Pear": [
+    "apple",
+    "apples",
+    "manzana",
+    "pear",
+    "pera",
+    "pina",
+    "pineapple",
+    "piña"
+  ],
+  "Rainbow Drop": [
+    "candy",
+    "dulce",
+    "fruta",
+    "gominola",
+    "rainbow",
+    "sweet"
+  ],
+  "Sea Salt Litchi": [
+    "lichi",
+    "litchi",
+    "lychee",
+    "sal marina",
+    "sea salt"
+  ],
+  "Strawberry Mango": [
+    "mango"
+  ],
+  "Watermelon Cherry": [
+    "cereza",
+    "cherries",
+    "cherry",
+    "sandia",
+    "sandía",
+    "watermelon"
+  ],
+  "Triple Melon": [
+    "cantaloupe",
+    "honeydew",
+    "melon",
+    "melón"
+  ],
+  "Triple Mango": [
+    "mango"
+  ],
+  "Strawberry Kiwi": [
+    "kiwi"
+  ],
+  "Pineapple Ice": [
+    "cool",
+    "frozen",
+    "hielo",
+    "ice",
+    "pina",
+    "pineapple",
+    "piña"
+  ],
+  "Strawberry Guava": [
+    "guava",
+    "guayaba"
+  ],
+  "Pineapple Coconut": [
+    "coco",
+    "coconut",
+    "pina",
+    "pineapple",
+    "piña"
+  ],
+  "Pineapple Mango": [
+    "mango",
+    "pina",
+    "pineapple",
+    "piña"
+  ],
+  "Grape": [
+    "grape",
+    "uva"
+  ],
+  "Blueberry": [
+    "arandano",
+    "arándano",
+    "blue razz",
+    "blue-razz",
+    "blueberries",
+    "blueberry"
+  ],
+  "Peach Ice": [
+    "cool",
+    "frozen",
+    "hielo",
+    "ice",
+    "melocoton",
+    "melocotón",
+    "peach"
+  ],
+  "Menthol": [
+    "menthol",
+    "mentol"
+  ],
+  "Lemon Lime": [
+    "lemon",
+    "lemonade",
+    "lima",
+    "lime",
+    "limon",
+    "limonada",
+    "limón"
+  ],
+  "Cherry Ice": [
+    "cereza",
+    "cherries",
+    "cherry",
+    "cool",
+    "frozen",
+    "hielo",
+    "ice"
+  ],
+  "Watermelon Ice": [
+    "cool",
+    "frozen",
+    "hielo",
+    "ice",
+    "sandia",
+    "sandía",
+    "watermelon"
+  ],
+  "Blueberry Sour Raspberry": [
+    "arandano",
+    "arándano",
+    "blue razz",
+    "blue-razz",
+    "blueberries",
+    "blueberry",
+    "frambuesa",
+    "raspberries",
+    "raspberry"
+  ],
+  "Rose Lemonade": [
+    "lemon",
+    "lemonade",
+    "limon",
+    "limonada",
+    "limón",
+    "rosa",
+    "rose"
+  ],
+  "Strawberry Ice": [
+    "cool",
+    "frozen",
+    "hielo",
+    "ice"
+  ],
+  "Mango Green Grape": [
+    "grape",
+    "mango",
+    "uva"
+  ],
+  "Mango": [
+    "mango"
+  ],
+  "Mary Menta": [
+    "mary mint",
+    "menta",
+    "mint"
+  ],
+  "Spearmint": [
+    "hierbabuena",
+    "spearmint"
+  ],
+  "Watermelon": [
+    "sandia",
+    "sandía",
+    "watermelon"
+  ],
+  "Tropical Fruits": [
+    "berries",
+    "berry mix",
+    "frutos del bosque",
+    "mixed berries",
+    "tropical"
+  ],
+  "Pineapple Passion Fruit Lemon": [
+    "lemon",
+    "lemonade",
+    "limon",
+    "limonada",
+    "limón",
+    "maracuya",
+    "maracuyá",
+    "passion fruit",
+    "passionfruit",
+    "pina",
+    "pineapple",
+    "piña"
+  ],
+  "Mix Berries": [
+    "berries",
+    "berry mix",
+    "frutos del bosque",
+    "mixed berries"
+  ],
+  "Kiwi Passion Fruit Guava": [
+    "guava",
+    "guayaba",
+    "kiwi",
+    "maracuya",
+    "maracuyá",
+    "passion fruit",
+    "passionfruit"
+  ],
+  "Golden Tobacco": [
+    "golden",
+    "tabaco",
+    "tobacco"
+  ],
+  "Double Apple": [
+    "apple",
+    "apples",
+    "doble manzana",
+    "manzana"
+  ],
+  "Cola": [
+    "coca cola",
+    "coke",
+    "cola"
+  ],
+  "Pink Lemonade": [
+    "lemon",
+    "lemonade",
+    "limon",
+    "limonada",
+    "limonada rosa",
+    "limón",
+    "pink lemonade"
+  ],
+  "Cranberry Ice": [
+    "arandano rojo",
+    "arándano rojo",
+    "cool",
+    "cranberry",
+    "frozen",
+    "hielo",
+    "ice"
+  ],
+  "Pineapple Apple": [
+    "apple",
+    "apples",
+    "manzana",
+    "pina",
+    "pineapple",
+    "piña"
+  ],
+  "Blue Razz Ice": [
+    "arandano",
+    "arándano",
+    "blue razz",
+    "blue-razz",
+    "blueberry",
+    "cool",
+    "frambuesa",
+    "frozen",
+    "hielo",
+    "ice",
+    "raspberry"
+  ],
+  "Juicy Peach": [
+    "melocoton",
+    "melocotón",
+    "peach"
+  ],
+  "Berry Apple Peach": [
+    "apple",
+    "apples",
+    "manzana",
+    "melocoton",
+    "melocotón",
+    "peach"
+  ],
+  "Piña Kiwi Lemonade": [
+    "kiwi",
+    "lemon",
+    "lemonade",
+    "limon",
+    "limonada",
+    "limón"
+  ],
+  "Apple Watermelon": [
+    "apple",
+    "apples",
+    "manzana",
+    "sandia",
+    "sandía",
+    "watermelon"
+  ],
+  "Rainbow": [
+    "candy",
+    "dulce",
+    "fruta",
+    "gominola",
+    "rainbow",
+    "sweet"
+  ],
+  "Cherry Lime Raspberry": [
+    "cereza",
+    "cherries",
+    "cherry",
+    "frambuesa",
+    "lima",
+    "lime",
+    "raspberries",
+    "raspberry"
+  ],
+  "Blueberry Raspberry": [
+    "arandano",
+    "arándano",
+    "blue razz",
+    "blue-razz",
+    "blueberries",
+    "blueberry",
+    "frambuesa",
+    "raspberries",
+    "raspberry"
+  ],
+  "Bubblegum Ice": [
+    "cool",
+    "frozen",
+    "hielo",
+    "ice"
+  ],
+  "Strawberry Watermelon Bubblegum": [
+    "sandia",
+    "sandía",
+    "watermelon"
+  ]
+};
+
+  // Mapa normalizado de alias por nombre exacto
+  const ALIASES = (() => {
+    const out = {}
+    for (const [name, arr] of Object.entries(RAW_ALIASES)) {
+      out[name] = Array.from(new Set((arr||[]).map(normalizeTerm)));
+    }
+    return out;
+  })();
+
+
+  function expandTerms(raw){
+    const base = normalizeTerm(raw);
+    if(!base) return [];
+    const extras = SYNONYMS[base] || [];
+    return Array.from(new Set([base, ...extras]));
+  }
 const tabs = [...document.querySelectorAll('.tab')];
 let currentBrand = '';
 let currentSeries = '';
@@ -287,35 +850,53 @@ function apply(){
     return;
   }
 
-  const term = (q.value||'').toLowerCase().trim();
-  const out = ITEMS.filter(o => {
-    const b = (o.brand||'').toUpperCase();
-    const inCat = !currentBrand || (
-      (currentBrand==='ZERO NICOTINA' && o.nic===0) ||
-      (currentBrand && currentBrand!=='ZERO NICOTINA' && b===currentBrand)
-    );
-    if(!inCat) return false;
-    // Subfiltro solo para LOST MARY
-    if(currentBrand==='LOST MARY' && currentSeries){
-      const s = (o.series||'').toUpperCase();
-      if(currentSeries==='BM600' && s !== 'BM600') return false;
-      if(currentSeries==='BM1000T' && !s.includes('BM1000')) return false; // incluye BM1000 Turbo
-    }
+  
+const rawQuery = q.value || '';
+const normalizedQuery = normalizeTerm(rawQuery);
+const words = normalizedQuery.split(' ').filter(Boolean);
+const termGroups = words.map(w => expandTerms(w));
 
-    // Subfiltro para OXBAR (Humo Invisible)
-    if(currentBrand==='OXBAR' && currentSeries){
-      const s = (o.series||'').toUpperCase();
-      if(currentSeries.toUpperCase()==='HUMO INVISIBLE' && s !== 'HUMO INVISIBLE') return false;
-    }
-    if(!term) return true;
+const out = ITEMS.filter(o => {
+  const b = (o.brand||'').toUpperCase();
+  const inCat = !currentBrand || (
+    (currentBrand==='ZERO NICOTINA' && o.nic===0) ||
+    (currentBrand && currentBrand!=='ZERO NICOTINA' && b===currentBrand)
+  );
+  if(!inCat) return false;
 
-    const name=(o.name||'').toLowerCase();
-    const series=(o.series||'').toLowerCase();
-    const brand=(o.brand||'').toLowerCase();
-    const tags=(o.tags||[]).join(' ').toLowerCase();
-    return name.includes(term) || series.includes(term) || brand.includes(term) || tags.includes(term);
-  });
-  render(out);
+  // Subfiltro LOST MARY
+  if(currentBrand==='LOST MARY' && currentSeries){
+    const s = (o.series||'').toUpperCase();
+    if(currentSeries==='BM600' && s !== 'BM600') return false;
+    if(currentSeries==='BM1000T' && !s.includes('BM1000')) return false;
+  }
+  // Subfiltro OXBAR (Humo Invisible)
+  if(currentBrand==='OXBAR' && currentSeries){
+    const s = (o.series||'').toUpperCase();
+    if(currentSeries.toUpperCase()==='HUMO INVISIBLE' && s !== 'HUMO INVISIBLE') return false;
+  }
+
+  if(!normalizedQuery) return true;
+
+  // Texto searchable unificado y normalizado
+  
+  // Texto searchable unificado y normalizado (+alias por nombre exacto)
+  const aliasTerms = (ALIASES[o.name] || []).join(' ');
+  const searchable = normalizeTerm([
+    o.name||'',
+    o.series||'',
+    o.brand||'',
+    (o.tags||[]).join(' '),
+    aliasTerms
+  ].join(' '));
+// AND entre palabras de la consulta, OR con sinónimos dentro de cada palabra
+  const matches = termGroups.length === 0
+    ? true
+    : termGroups.every(group => group.some(t => searchable.includes(t)));
+
+  return matches;
+});
+render(out);
 }
 
 
