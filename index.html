@@ -9,22 +9,76 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
 
-#q {
-  text-align: center;
-  padding: 10px 14px;
-  font-size: 1.2em;
+/* --- Search bar refinements (center text, full placeholder, bigger X) --- */
+.search__wrap { position: relative; display: flex; align-items: center; gap: 8px; max-width:min(740px,92vw); width:100%; margin:0 auto; background: rgba(255,255,255,.9); backdrop-filter: blur(10px); border:1px solid #e5e7eb; border-radius: 16px; padding: 12px 14px; box-shadow: var(--shadow); }
+.search__wrap #q { 
+  flex: 1; 
+  min-height: 54px; 
+  border: none; 
+  outline: none; 
+  background: transparent; 
+  text-align: center; 
+  font-size: 1.15rem; 
   text-transform: uppercase;
-  width: 100%;
-  max-width: 400px;
-  box-sizing: border-box;
+  padding: 8px 12px;
+  width: 100% !important; 
+  max-width: none !important;
+  box-shadow: none;
+  border-radius: 12px;
 }
+.search__wrap #q::placeholder {
+  text-transform: none; /* que el placeholder no crezca en longitud */
+  letter-spacing: .2px;
+  color: #6b7280;
+  opacity: .85;
+}
+.search__clear {
+  border: none; 
+  background: transparent; 
+  font-size: 26px; 
+  line-height: 1; 
+  padding: 6px 10px; 
+  cursor: pointer; 
+  color: #6b7280; 
+  opacity: .9;
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center;
+}
+.search__clear:hover { color: #ef4444; opacity: 1; transform: scale(1.05); }
 
-@media (min-width: 768px) {
-  #q {
-  text-align: center;
-    max-width: 300px;
-  }
-}
+
+
+/* === UI Enhancements === */
+.tabs, .subtabs { gap: 10px; padding: 6px 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+.tab, .subtab { scroll-snap-align: start; padding: 10px 14px; border-radius: 999px; border: 1px solid #e5e7eb; background:#fff; }
+.tab.active { background: #fff7d6 !important; border-color:#f2d98a; }
+.subtab.active { background: #ffefb3 !important; border-color:#ffd166; }
+
+.search { position: sticky; top: 0; z-index: 30; background: transparent; padding: 12px 8px; }
+.search__wrap { position: relative; display: flex; align-items: center; gap: 8px; max-width:min(740px,92vw); width:100%; margin:0 auto; background: rgba(255,255,255,.85); backdrop-filter: blur(8px); border:1px solid #e5e7eb; border-radius: 16px; padding: 10px 12px; box-shadow: var(--shadow);}
+#q { min-height: 48px; border-radius: 12px; border:none; box-shadow:none; background: transparent; flex:1; outline: none; }
+.search__clear { border:none; background:transparent; font-size:18px; line-height:1; padding:6px; cursor:pointer; opacity:.6; }
+.search__clear:hover { opacity:1; }
+#resultCount { font-size: 13px; color: var(--muted); margin-left: 6px; white-space: nowrap; }
+
+.grid { gap: 20px; }
+.card { border-radius: 16px; border:1px solid #e9eef5; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 20px rgba(0,0,0,.06); overflow: hidden; background:#fff; }
+.imgbox img { aspect-ratio: 1/1; object-fit: contain; }
+.info b { letter-spacing: .3px; }
+.badge { border-color:#e5e7eb; background:#fffbe6; color:#854d0e; font-weight:700; }
+
+/* Highlight matches */
+mark { background:#ffec99; color: inherit; padding:0 .1em; border-radius:3px; }
+
+/* Tap targets */
+.tab, .subtab { min-height: 44px; display:inline-flex; align-items:center; }
+button, .btn { min-height: 44px; }
+
+/* Unavailable style remains but a bit clearer */
+.card.unavailable { filter: grayscale(100%); opacity:.55; position:relative; }
+.card.unavailable .overlay { position:absolute; inset:auto 50% 10px 50%; transform:translateX(-50%); background:rgba(0,0,0,.75); color:#fff; padding:6px 10px; border-radius:6px; font-weight:700; text-transform:uppercase; pointer-events:none; font-size:12px; }
+
 
 
 :root{--bg:#ffffff;--text:#111928;--muted:#6b7280;--card:#f5f7fb;--border:#e5e7eb;--shadow:0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06)}
@@ -98,7 +152,7 @@
 <span class="subtab" data-series="BM1000T">BM1000T</span>
 </div>
 <div class="subtabs subtabs--hidden" id="ox-subtabs"><span class="subtab active" data-series="">TODOS</span><span class="subtab" data-series="Humo Invisible">HUMO INVISIBLE</span></div>
-<div class="search"><input id="q" placeholder="Buscar sabor (ej. mango, cherry, ice)" type="search"/></div>
+<div class="search"><div class="search__wrap"><input id="q" placeholder="Buscar sabor (ej. mango, cherry, ice)" type="search"/><button class="search__clear" aria-label="Borrar búsqueda" title="Borrar">×</button><span id="resultCount"></span></div></div>
 <div class="grid" id="grid"></div>
 </div>
 <script>
@@ -960,6 +1014,109 @@ apply();
     console.error('Firebase init error', e);
   }
 </script>
+
+
+// === UX: debounce + contador + clear + highlight ===
+function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+const resultCountEl = document.getElementById('resultCount');
+const clearBtn = document.querySelector('.search__clear');
+if (clearBtn) {
+  clearBtn.addEventListener('click', () => {
+    q.value='';
+    if (typeof runSearch === 'function') runSearch(); else if (typeof apply === 'function') apply();
+    q.focus();
+  });
+}
+
+// Reemplaza el listener directo por debounce si existe
+try {
+  if (q) {
+    const debounced = debounce(() => { if (typeof runSearch==='function') runSearch(); else if (typeof apply==='function') apply(); }, 150);
+    q.removeEventListener('input', runSearch); // por si existiera
+    q.addEventListener('input', debounced, { passive:true });
+  }
+} catch(e){}
+
+// Helper para resaltar coincidencias
+function highlight(text, terms){
+  if (!terms || !terms.length) return text;
+  const esc = s=>s.replace(/[.*+?^${}()|[\]\]/g,'\$&');
+  const re = new RegExp(`(${terms.map(esc).join('|')})`,'gi');
+  return text.replace(re,'<mark>$1</mark>');
+}
+
+// Necesitamos exponer los términos de la consulta actual
+let __lastQueryTerms = [];
+
+// Hookeamos tu lógica de filtro para guardar términos expandidos
+const __oldFilterCatalogByQuery = (typeof filterCatalogByQuery === 'function') ? filterCatalogByQuery : null;
+if (__oldFilterCatalogByQuery) {
+  window.filterCatalogByQuery = function(query){
+    // recalcula grupos con tus funciones si existen
+    const normalizedQuery = (typeof normalizeTerm==='function') ? normalizeTerm(query||'') : (query||'').toLowerCase().trim();
+    const words = normalizedQuery.split(' ').filter(Boolean);
+    // intenta expandir sinónimos si existe expandTerms
+    const expanded = (typeof expandTerms==='function') ? words.flatMap(w=>[w, ...(expandTerms(w)||[])]) : words;
+    __lastQueryTerms = Array.from(new Set(expanded)).filter(Boolean);
+    return __oldFilterCatalogByQuery(query);
+  }
+}
+
+// Parcha render() para: contador + estado vacío + highlight + lazy images
+const __oldRender = (typeof render === 'function') ? render : null;
+if (__oldRender) {
+  window.render = function(items){
+    if (resultCountEl) resultCountEl.textContent = `${items.length} resultado${items.length!==1?'s':''}`;
+
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="empty" style="padding:32px;text-align:center;color:#6b7280;">Sin resultados</div>`;
+      return;
+    }
+
+    // Si tu render original crea el HTML, llamamos y luego intentamos inyectar mejoras (lazy/decoding y highlight)
+    __oldRender(items);
+
+    // 1) Lazy/decoding + dimensiones seguras si faltan
+    grid.querySelectorAll('img').forEach(img => {
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      if (!img.getAttribute('width')) img.setAttribute('width','300');
+      if (!img.getAttribute('height')) img.setAttribute('height','300');
+      img.alt = img.alt || 'Producto';
+    });
+
+    // 2) Resaltado en nombres (si están en .info b) y series/marca si están presentes
+    grid.querySelectorAll('.info b').forEach(el => {
+      try { el.innerHTML = highlight(el.textContent, __lastQueryTerms); } catch(e){}
+    });
+  }
+}
+
+// === Admin: proteger con long-press (300ms) para evitar toques accidentales ===
+function makeLongPressToggle(cardEl, onToggle) {
+  let timer = null, pressed = false;
+  const start = () => { pressed = true; timer = setTimeout(() => { if (pressed) onToggle(); }, 300); };
+  const cancel = () => { pressed = false; clearTimeout(timer); };
+  cardEl.addEventListener('touchstart', start, {passive:true});
+  cardEl.addEventListener('mousedown', start);
+  ['touchend','touchmove','touchcancel','mouseup','mouseleave'].forEach(ev => cardEl.addEventListener(ev, cancel));
+}
+
+// Si existe enableAdminClicks, lo extendemos para long-press
+if (typeof enableAdminClicks === 'function') {
+  const __oldEnableAdminClicks = enableAdminClicks;
+  window.enableAdminClicks = function(){
+    __oldEnableAdminClicks();
+    // Intenta añadir long-press a las cards si tenemos handler 'onAdminToggle'
+    const cards = document.querySelectorAll('[data-vaper-id]');
+    cards.forEach(card => {
+      const id = String(card.getAttribute('data-vaper-id'));
+      // quitamos click directo si lo hubiera (opcional)
+      card.removeEventListener('click', onAdminToggle);
+      makeLongPressToggle(card, () => onAdminToggle({ currentTarget: card }));
+    });
+  }
+}
 
 </body>
 </html>
