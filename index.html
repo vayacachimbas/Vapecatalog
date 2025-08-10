@@ -78,6 +78,7 @@
 <span class="subtab" data-series="BM600">BM600</span>
 <span class="subtab" data-series="BM1000T">BM1000T</span>
 </div>
+<div class="subtabs subtabs--hidden" id="ox-subtabs"><span class="subtab active" data-series="">TODOS</span><span class="subtab" data-series="Humo Invisible">HUMO INVISIBLE</span></div>
 <div class="search"><input id="q" placeholder="Buscar sabor (ej. mango, cherry, ice)" type="search"/></div>
 <div class="grid" id="grid"></div>
 </div>
@@ -147,11 +148,24 @@ const tabs = [...document.querySelectorAll('.tab')];
 let currentBrand = '';
 let currentSeries = '';
 const lmSubtabs = { el: null, tabs: [] };
+const oxSubtabs = { el: null, tabs: [] };
 document.addEventListener('DOMContentLoaded', () => {
   lmSubtabs.el = document.getElementById('lm-subtabs');
   if(lmSubtabs.el){ lmSubtabs.tabs = [...lmSubtabs.el.querySelectorAll('.subtab')];
     lmSubtabs.tabs.forEach(st => st.addEventListener('click', () => {
       lmSubtabs.tabs.forEach(x => x.classList.remove('active'));
+      st.classList.add('active');
+      currentSeries = st.dataset.series || '';
+      apply();
+    }));
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  oxSubtabs.el = document.getElementById('ox-subtabs');
+  if(oxSubtabs.el){ oxSubtabs.tabs = [...oxSubtabs.el.querySelectorAll('.subtab')];
+    oxSubtabs.tabs.forEach(st => st.addEventListener('click', () => {
+      oxSubtabs.tabs.forEach(x => x.classList.remove('active'));
       st.classList.add('active');
       currentSeries = st.dataset.series || '';
       apply();
@@ -287,6 +301,12 @@ function apply(){
       if(currentSeries==='BM600' && s !== 'BM600') return false;
       if(currentSeries==='BM1000T' && !s.includes('BM1000')) return false; // incluye BM1000 Turbo
     }
+
+    // Subfiltro para OXBAR (Humo Invisible)
+    if(currentBrand==='OXBAR' && currentSeries){
+      const s = (o.series||'').toUpperCase();
+      if(currentSeries.toUpperCase()==='HUMO INVISIBLE' && s !== 'HUMO INVISIBLE') return false;
+    }
     if(!term) return true;
 
     const name=(o.name||'').toLowerCase();
@@ -299,25 +319,25 @@ function apply(){
 }
 
 
+
 tabs.forEach(t => t.addEventListener('click', () => {
   tabs.forEach(x => x.classList.remove('active'));
   t.classList.add('active');
   currentBrand = t.dataset.brand || '';
-  // Subpestañas: visibles solo en LOST MARY
+  // Reset subserie al cambiar de categoría
+  currentSeries = '';
+  // Subpestañas: visibles en LOST MARY y OXBAR (Humo Invisible)
   if(lmSubtabs.el){
-    if(currentBrand === 'LOST MARY'){
-      lmSubtabs.el.classList.remove('subtabs--hidden');
-    } else {
-      lmSubtabs.el.classList.add('subtabs--hidden');
-      currentSeries = '';
-      if(lmSubtabs.tabs && lmSubtabs.tabs.length){
-        lmSubtabs.tabs.forEach(x => x.classList.remove('active'));
-        lmSubtabs.tabs[0].classList.add('active'); // TODOS
-      }
-    }
+    if(currentBrand === 'LOST MARY'){ lmSubtabs.el.classList.remove('subtabs--hidden'); }
+    else { lmSubtabs.el.classList.add('subtabs--hidden'); lmSubtabs.tabs.forEach(x => x.classList.remove('active')); lmSubtabs.tabs[0]?.classList.add('active'); }
+  }
+  if(oxSubtabs.el){
+    if(currentBrand === 'OXBAR'){ oxSubtabs.el.classList.remove('subtabs--hidden'); }
+    else { oxSubtabs.el.classList.add('subtabs--hidden'); oxSubtabs.tabs.forEach(x => x.classList.remove('active')); oxSubtabs.tabs[0]?.classList.add('active'); }
   }
   apply();
 }));
+
 q.addEventListener('input', apply);
 apply();
 </script>
