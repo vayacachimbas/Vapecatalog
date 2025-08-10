@@ -203,7 +203,7 @@ const TOP_SELLERS_NAMES = {
 
 
 let adminMode = false;
-let unavailableItems = JSON.parse(localStorage.getItem('unavailableItems') || '[]');
+let unavailableItems = []; // Firebase will keep this in sync
 
 function toggleAdminMode(){ 
   adminMode = !adminMode; 
@@ -215,7 +215,7 @@ function markUnavailable(itemId){
   if(!adminMode) return;
   if(!unavailableItems.includes(itemId)) unavailableItems.push(itemId);
   else unavailableItems = unavailableItems.filter(x => x !== itemId);
-  localStorage.setItem('unavailableItems', JSON.stringify(unavailableItems));
+  if (typeof unavailableRef !== 'undefined') unavailableRef.set(unavailableItems).catch(console.error);
   apply();
 }
 
@@ -342,5 +342,43 @@ q.addEventListener('input', apply);
 apply();
 </script>
 <button id="adminBtn" onclick="toggleAdminMode()" title="Admin"></button>
+
+<!-- Firebase compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+  // Firebase config for CatalogoVapers (provided by Alberto)
+  const firebaseConfig = {
+    apiKey: "AIzaSyANtVsMZZgQvxDkfcM24FjJQVYARQum2Cc",
+    authDomain: "catalogovapers.firebaseapp.com",
+    databaseURL: "https://catalogovapers-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "catalogovapers",
+    storageBucket: "catalogovapers.firebasestorage.app",
+    messagingSenderId: "343540976332",
+    appId: "1:343540976332:web:3641018dc434376f775069",
+    measurementId: "G-XDW33MLBGL"
+  };
+  try {
+    firebase.initializeApp(firebaseConfig);
+    // login anónimo: necesario para escribir (según reglas)
+    firebase.auth().signInAnonymously().catch(console.error);
+    // referencia global
+    window.unavailableRef = firebase.database().ref('catalog/unavailable');
+    // suscripción en tiempo real
+    unavailableRef.on('value', (snap) => {
+      const val = snap.val();
+      if (Array.isArray(val)) {
+        unavailableItems = val;
+      } else {
+        unavailableItems = [];
+      }
+      if (typeof apply === 'function') apply();
+    });
+  } catch (e) {
+    console.error('Firebase init error', e);
+  }
+</script>
+
 </body>
 </html>
