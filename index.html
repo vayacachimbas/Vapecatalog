@@ -77,6 +77,50 @@
 
 
 .badge{display:inline-block;margin-left:6px;border:1px solid #dbe1ea;border-radius:999px;padding:2px 8px;font-size:11px;color:#4b5563;background:#fff6d8;font-weight:700}
+
+/* === Visual Enhancements (light theme) === */
+body {
+  background:
+    radial-gradient(1200px 600px at -10% -10%, #eef2ff 0%, transparent 60%),
+    radial-gradient(900px 500px at 110% 0%, #fff7d6 0%, transparent 55%),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  color: #111928;
+}
+.card {
+  box-shadow: 0 8px 22px rgba(17, 24, 39, 0.08);
+  transition: transform .18s ease, box-shadow .18s ease, opacity .4s ease;
+  opacity: 0;
+  animation: fadeIn .45s ease forwards;
+  border-color: #e9eef5;
+  background: #ffffff;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(17, 24, 39, 0.12);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* TOP badge: gold pill */
+.badge-top {
+  background: linear-gradient(145deg, #ffd84d, #ffb43a);
+  color: #111928 !important;
+  border: none !important;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  margin-left: 10px;
+}
+.tab.active { border-color:#f1c15b !important; background:#fff3bf !important; }
+.subtab.active { border-color:#f1c15b !important; background:#ffe08a !important; }
+
 </style>
 </head>
 <body>
@@ -811,7 +855,7 @@ function card(o){
   const b = document.createElement('b'); b.textContent = (o.displayName || o.name);
   const small = document.createElement('small'); small.textContent = `${o.brand} · ${o.series} · ${o.puffs} PUFFS`;
   info.appendChild(b); info.appendChild(small);
-  if (o.topRank){ const badge = document.createElement('span'); badge.className='badge'; badge.textContent = `TOP ${o.topRank}`; info.appendChild(badge);}
+  if (o.topRank){ const badge = document.createElement('span'); badge.className='badge badge-top'; badge.textContent = `TOP ${o.topRank}`; info.appendChild(badge);}
   // tags visibles y clicables
   if (o.tags && o.tags.length){
     const tgWrap = document.createElement('div'); tgWrap.className='tags';
